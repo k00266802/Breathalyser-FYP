@@ -54,7 +54,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 @ExperimentalMaterialApi
-fun TimetableApp() {
+fun BreathalyserFYP() {
   TimetableAppTheme {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       RequestNotificationPermissionDialog()

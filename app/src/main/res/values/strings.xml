@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Breathalyser-FYP</string>
+    <string name="device_address">00:22:12:02:79:6D</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>

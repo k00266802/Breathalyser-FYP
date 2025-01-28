@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "484369311757",
-    "project_id": "tustimetableapp",
-    "storage_bucket": "tustimetableapp.firebasestorage.app"
+    "project_number": "696321467144",
+    "project_id": "breathalyser-fyp",
+    "storage_bucket": "breathalyser-fyp.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:484369311757:android:4930c530e72fe0dfc70d44",
+        "mobilesdk_app_id": "1:696321467144:android:741903d1bf2e4b5c7202bd",
         "android_client_info": {
-          "package_name": "com.example.timetable_app"
+          "package_name": "com.example.breathalyser_fyp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBHmbEnG1VniJt52fJUGYBHfFTRv6qP0LM"
+          "current_key": "AIzaSyBifr2snlkiDaKGY1T0c_-OlUnAcQHRMLs"
         }
       ],
       "services": {
