@@ -44,7 +44,7 @@ import com.example.breathalyser_fyp.screens.login.LoginScreen
 import com.example.breathalyser_fyp.screens.campus_map.CampusScreen
 import com.example.breathalyser_fyp.screens.settings.SettingsScreen
 import com.example.breathalyser_fyp.screens.splash.SplashScreen
-import com.example.breathalyser_fyp.screens.brac_entries.BacScreen
+import com.example.breathalyser_fyp.screens.bac_entries.BacScreen
 import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

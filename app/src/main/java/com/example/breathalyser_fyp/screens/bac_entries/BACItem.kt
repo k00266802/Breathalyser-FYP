@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.breathalyser_fyp.screens.brac_entries
+package com.example.breathalyser_fyp.screens.bac_entries
 
 import android.util.Log
 import androidx.compose.foundation.clickable
