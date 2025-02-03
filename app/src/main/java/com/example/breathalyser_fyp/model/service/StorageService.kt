@@ -21,10 +21,9 @@ import com.example.breathalyser_fyp.model.BacReading
 import kotlinx.coroutines.flow.Flow
 
 interface StorageService {
-  val lectures: Flow<List<BacReading>>
-  suspend fun getLecture(lectureId: String): BacReading?
+  val bacReadings: Flow<List<BacReading>>
+  suspend fun getBacReadings(lectureId: String): BacReading?
   suspend fun save(bacReading: BacReading): String
   suspend fun update(bacReading: BacReading)
   suspend fun delete(lectureId: String)
-  suspend fun getCampus(): Campus?
 }

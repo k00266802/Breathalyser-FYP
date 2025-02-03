@@ -16,7 +16,6 @@ limitations under the License.
 
 package com.example.breathalyser_fyp.model.service.impl
 
-import com.example.breathalyser_fyp.model.Campus
 import com.example.breathalyser_fyp.model.BacReading
 import com.example.breathalyser_fyp.model.service.AccountService
 import com.example.breathalyser_fyp.model.service.StorageService
@@ -36,54 +35,45 @@ class StorageServiceImpl @Inject constructor(
   private val auth: AccountService
   ) : StorageService {
 
-  private val collection get() = firestore.collection(LECTURE_COLLECTION)
+  private val collection get() = firestore.collection(BAC_READING_COLLECTION)
     .whereEqualTo(USER_ID_FIELD, auth.currentUserId)
 
   @OptIn(ExperimentalCoroutinesApi::class)
-  override val lectures: Flow<List<BacReading>>
+  override val bacReadings: Flow<List<BacReading>>
     get() =
       auth.currentUser.flatMapLatest { user ->
         firestore
-          .collection(LECTURE_COLLECTION)
+          .collection(BAC_READING_COLLECTION)
           .whereEqualTo(USER_ID_FIELD, user.id)
-          .orderBy(START_TIME_FIELD, Query.Direction.ASCENDING)
+          .orderBy(TIMESTAMP_FIELD, Query.Direction.ASCENDING)
           .dataObjects()
       }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  override suspend fun getCampus(): Campus? =
-    firestore.collection(CAMPUS_COLLECTION).whereEqualTo(USER_ID_FIELD, auth.currentUserId).get().await().first().toObject<Campus>()
 
-  override suspend fun getLecture(lectureId: String): BacReading? =
-    firestore.collection(LECTURE_COLLECTION).document(lectureId).get().await().toObject()
+  override suspend fun getBacReadings(lectureId: String): BacReading? =
+    firestore.collection(BAC_READING_COLLECTION).document(lectureId).get().await().toObject()
 
   override suspend fun save(bacReading: BacReading): String =
-    trace(SAVE_LECTURE_TRACE) {
+    trace(SAVE_BAC_READING_TRACE) {
      val updatedTask = bacReading.copy(userId = auth.currentUserId)
-      firestore.collection(LECTURE_COLLECTION).add(updatedTask).await().id
+      firestore.collection(BAC_READING_COLLECTION).add(updatedTask).await().id
     }
 
   override suspend fun update(bacReading: BacReading): Unit =
-    trace(UPDATE_LECTURE_TRACE) {
-      firestore.collection(LECTURE_COLLECTION).document(bacReading.id).set(bacReading).await()
+    trace(UPDATE_BAC_READING_TRACE) {
+      firestore.collection(BAC_READING_COLLECTION).document(bacReading.id).set(bacReading).await()
     }
 
   override suspend fun delete(lectureId: String) {
-    firestore.collection(LECTURE_COLLECTION).document(lectureId).delete().await()
+    firestore.collection(BAC_READING_COLLECTION).document(lectureId).delete().await()
   }
   
 
   companion object {
     private const val USER_ID_FIELD = "userId"
-    private const val DESCRIPTION_FIELD = "description"
-    private const val ROOM_FIELD = "room"
-    private const val TEST = "wBNqRyQBTOCTXIwdmcZK"
-    private const val LECTURE_NAME_FIELD = "lectureName"
-    private const val START_TIME_FIELD = "startTime"
-    private const val END_TIME_FIELD = "endTime"
-    private const val LECTURE_COLLECTION = "lectures"
-    private const val CAMPUS_COLLECTION = "campus"
-    private const val SAVE_LECTURE_TRACE = "saveTask"
-    private const val UPDATE_LECTURE_TRACE = "updateTask"
+    private const val TIMESTAMP_FIELD = "timestamp"
+    private const val BAC_READING_COLLECTION = "bacReadings"
+    private const val SAVE_BAC_READING_TRACE = "saveBacReading"
+    private const val UPDATE_BAC_READING_TRACE = "updateBacReading"
   }
 }

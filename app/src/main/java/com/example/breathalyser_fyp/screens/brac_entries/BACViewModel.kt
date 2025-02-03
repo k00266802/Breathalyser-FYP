@@ -22,7 +22,6 @@ import android.bluetooth.BluetoothSocket
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.example.breathalyser_fyp.CAMPUS_MAP_SCREEN
 import com.example.breathalyser_fyp.SETTINGS_SCREEN
 
@@ -35,8 +34,6 @@ import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.launch
 import java.io.IOException
 import java.io.InputStream
 import java.util.UUID
@@ -51,7 +48,7 @@ class BACViewModel @Inject constructor(
     val options = mutableStateOf<List<String>>(listOf())
 
 
-    val bacEntries = storageService.lectures
+    val bacEntries = storageService.bacReadings
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var bluetoothSocket: BluetoothSocket? = null
 
