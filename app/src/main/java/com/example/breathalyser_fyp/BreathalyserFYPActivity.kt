@@ -84,99 +84,11 @@ class BreathalyserFYPActivity : AppCompatActivity() {
             1
         )
 
-        val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-        pairedDevices?.forEach { device ->
-            val deviceName = device.name
-            val deviceHardwareAddress = device.address // MAC address
-            Log.w("b-name", deviceName)
-            Log.w("b-address", deviceHardwareAddress)
-        }
-
-
-        setContent { BluetoothAppContent() }
+        setContent { BreathalyserFYP() }
         //connectToDevice("Breathalyser") {data -> Log.w("b-data", data) }
 
     }
 
-    @Composable
-    fun BluetoothAppContent() {
-        var message: String by remember { mutableStateOf("") }
-        var isConnected by remember { mutableStateOf(false) }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Button(onClick = {
-                if (isConnected) {
-                    // Disconnect logic
-                    isConnected = false
-                    message = ""
-                    Toast.makeText(this@BreathalyserFYPActivity, "Disconnected", Toast.LENGTH_SHORT).show()
-                }
-                CoroutineScope(Dispatchers.IO).launch {
-                    connectToDevice(getResources().getString(R.string.device_name)) { data ->
-                        runOnUiThread {
-                            message = data
-                            isConnected = true
-                        }
-                    }
-                }
-
-            }) {
-                Text(if (isConnected) "Disconnect" else "Connect")
-            }
-            if (message.isNotEmpty()) {
-                Text("Received Data: $message")
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun connectToDevice(deviceName: String, onDataReceived: (String) -> Unit) {
-        val device = bluetoothAdapter?.bondedDevices?.find { it.name == deviceName }
-        if (device == null) {
-            runOnUiThread {
-                Toast.makeText(this, "Device '$deviceName' not found", Toast.LENGTH_SHORT).show()
-            }
-            return
-        }
-
-        val uuid = device.uuids.firstOrNull()?.uuid ?: UUID.randomUUID()
-        val socket: BluetoothSocket? = device.createRfcommSocketToServiceRecord(uuid)
-
-        //bluetoothAdapter.cancelDiscovery()
-
-        try {
-            socket?.connect()
-            runOnUiThread {
-                Toast.makeText(this, "Connected to $deviceName", Toast.LENGTH_SHORT).show()
-            }
-
-            val inputStream: InputStream? = socket?.inputStream
-
-            val buffer = ByteArray(1024)
-            while (true) {
-                try {
-                    val bytes = inputStream?.read(buffer) ?: break
-                    val receivedMessage = String(buffer, 0, bytes)
-                    onDataReceived(receivedMessage)
-                } catch (e: Exception) {
-                    Log.e("Bluetooth", "Error reading from device", e)
-                    break
-                }
-            }
-
-            socket?.close()
-        } catch (e: Exception) {
-            Log.e("Bluetooth", "Error connecting to device", e)
-            runOnUiThread {
-                Toast.makeText(this, "Error connecting to device", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
 }
 

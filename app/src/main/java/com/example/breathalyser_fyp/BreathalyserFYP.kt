@@ -41,7 +41,6 @@ import com.example.breathalyser_fyp.common.composable.PermissionDialog
 import com.example.breathalyser_fyp.common.composable.RationaleDialog
 import com.example.breathalyser_fyp.common.snackbar.SnackbarManager
 import com.example.breathalyser_fyp.screens.login.LoginScreen
-import com.example.breathalyser_fyp.screens.campus_map.CampusScreen
 import com.example.breathalyser_fyp.screens.settings.SettingsScreen
 import com.example.breathalyser_fyp.screens.splash.SplashScreen
 import com.example.breathalyser_fyp.screens.bac_entries.BacScreen
@@ -136,9 +135,6 @@ fun NavGraphBuilder.timetableGraph(appState: BreathalyserFYPState) {
     LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
   }
 
-  composable(CAMPUS_MAP_SCREEN){
-    CampusScreen(openScreen = { route -> appState.navigate(route) })
-  }
 
   composable(LECTURES_SCREEN) { BacScreen(openScreen = { route -> appState.navigate(route) }) }
 
