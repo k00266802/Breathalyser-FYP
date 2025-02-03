@@ -17,14 +17,14 @@ limitations under the License.
 package com.example.breathalyser_fyp.model.service
 
 import com.example.breathalyser_fyp.model.Campus
-import com.example.breathalyser_fyp.model.Lecture
+import com.example.breathalyser_fyp.model.BacReading
 import kotlinx.coroutines.flow.Flow
 
 interface StorageService {
-  val lectures: Flow<List<Lecture>>
-  suspend fun getLecture(lectureId: String): Lecture?
-  suspend fun save(lecture: Lecture): String
-  suspend fun update(lecture: Lecture)
+  val lectures: Flow<List<BacReading>>
+  suspend fun getLecture(lectureId: String): BacReading?
+  suspend fun save(bacReading: BacReading): String
+  suspend fun update(bacReading: BacReading)
   suspend fun delete(lectureId: String)
   suspend fun getCampus(): Campus?
 }

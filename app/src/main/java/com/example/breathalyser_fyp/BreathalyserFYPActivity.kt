@@ -38,13 +38,33 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import java.util.concurrent.Executors
 
 // BreathalyserFYPActivity starts the first composable, which uses material cards that are still experimental.
 // TODO: Update material dependency and experimental annotations once the API stabilizes.
@@ -53,7 +73,7 @@ import java.util.UUID
 class BreathalyserFYPActivity : AppCompatActivity() {
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
-    @SuppressLint("InlinedApi")
+    @SuppressLint("InlinedApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,16 +84,63 @@ class BreathalyserFYPActivity : AppCompatActivity() {
             1
         )
 
-        setContent { BreathalyserFYP() }
-        connectToDevice("Breathalyser") {data -> Log.w("b-data", data) }
+        val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+        pairedDevices?.forEach { device ->
+            val deviceName = device.name
+            val deviceHardwareAddress = device.address // MAC address
+            Log.w("b-name", deviceName)
+            Log.w("b-address", deviceHardwareAddress)
+        }
 
+
+        setContent { BluetoothAppContent() }
+        //connectToDevice("Breathalyser") {data -> Log.w("b-data", data) }
+
+    }
+
+    @Composable
+    fun BluetoothAppContent() {
+        var message: String by remember { mutableStateOf("") }
+        var isConnected by remember { mutableStateOf(false) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Button(onClick = {
+                if (isConnected) {
+                    // Disconnect logic
+                    isConnected = false
+                    message = ""
+                    Toast.makeText(this@BreathalyserFYPActivity, "Disconnected", Toast.LENGTH_SHORT).show()
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    connectToDevice(getResources().getString(R.string.device_name)) { data ->
+                        runOnUiThread {
+                            message = data
+                            isConnected = true
+                        }
+                    }
+                }
+
+            }) {
+                Text(if (isConnected) "Disconnect" else "Connect")
+            }
+            if (message.isNotEmpty()) {
+                Text("Received Data: $message")
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun connectToDevice(deviceName: String, onDataReceived: (String) -> Unit) {
         val device = bluetoothAdapter?.bondedDevices?.find { it.name == deviceName }
         if (device == null) {
-            Toast.makeText(this, "Device not found", Toast.LENGTH_SHORT).show()
+            runOnUiThread {
+                Toast.makeText(this, "Device '$deviceName' not found", Toast.LENGTH_SHORT).show()
+            }
             return
         }
 
@@ -84,23 +151,33 @@ class BreathalyserFYPActivity : AppCompatActivity() {
 
         try {
             socket?.connect()
-            Toast.makeText(this, "Connected to $deviceName", Toast.LENGTH_SHORT).show()
+            runOnUiThread {
+                Toast.makeText(this, "Connected to $deviceName", Toast.LENGTH_SHORT).show()
+            }
 
             val inputStream: InputStream? = socket?.inputStream
-            val outputStream: OutputStream? = socket?.outputStream
 
             val buffer = ByteArray(1024)
-            val bytes = inputStream?.read(buffer)
-            val receivedMessage = bytes?.let { String(buffer, 0, it) } ?: ""
-
-            onDataReceived(receivedMessage)
+            while (true) {
+                try {
+                    val bytes = inputStream?.read(buffer) ?: break
+                    val receivedMessage = String(buffer, 0, bytes)
+                    onDataReceived(receivedMessage)
+                } catch (e: Exception) {
+                    Log.e("Bluetooth", "Error reading from device", e)
+                    break
+                }
+            }
 
             socket?.close()
         } catch (e: Exception) {
             Log.e("Bluetooth", "Error connecting to device", e)
-            Toast.makeText(this, "Error connecting to device", Toast.LENGTH_SHORT).show()
+            runOnUiThread {
+                Toast.makeText(this, "Error connecting to device", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 }
 
 

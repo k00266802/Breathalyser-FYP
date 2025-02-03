@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Breathalyser-FYP</string>
     <string name="device_address">00:22:12:02:79:6D</string>
+    <string name="device_name">Breathalyser</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
@@ -26,7 +27,7 @@
     <string name="lectures">Lectures</string>
 
     <!-- EditTaskScreen -->
-    <string name="edit_task">Edit your lecture</string>
+    <string name="edit_task">Edit your bacReading</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="url">URL</string>

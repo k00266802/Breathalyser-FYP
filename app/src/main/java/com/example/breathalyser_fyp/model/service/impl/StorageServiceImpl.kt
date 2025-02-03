@@ -17,7 +17,7 @@ limitations under the License.
 package com.example.breathalyser_fyp.model.service.impl
 
 import com.example.breathalyser_fyp.model.Campus
-import com.example.breathalyser_fyp.model.Lecture
+import com.example.breathalyser_fyp.model.BacReading
 import com.example.breathalyser_fyp.model.service.AccountService
 import com.example.breathalyser_fyp.model.service.StorageService
 import com.example.breathalyser_fyp.model.service.trace
@@ -40,7 +40,7 @@ class StorageServiceImpl @Inject constructor(
     .whereEqualTo(USER_ID_FIELD, auth.currentUserId)
 
   @OptIn(ExperimentalCoroutinesApi::class)
-  override val lectures: Flow<List<Lecture>>
+  override val lectures: Flow<List<BacReading>>
     get() =
       auth.currentUser.flatMapLatest { user ->
         firestore
@@ -54,18 +54,18 @@ class StorageServiceImpl @Inject constructor(
   override suspend fun getCampus(): Campus? =
     firestore.collection(CAMPUS_COLLECTION).whereEqualTo(USER_ID_FIELD, auth.currentUserId).get().await().first().toObject<Campus>()
 
-  override suspend fun getLecture(lectureId: String): Lecture? =
+  override suspend fun getLecture(lectureId: String): BacReading? =
     firestore.collection(LECTURE_COLLECTION).document(lectureId).get().await().toObject()
 
-  override suspend fun save(lecture: Lecture): String =
+  override suspend fun save(bacReading: BacReading): String =
     trace(SAVE_LECTURE_TRACE) {
-     val updatedTask = lecture.copy(userId = auth.currentUserId)
+     val updatedTask = bacReading.copy(userId = auth.currentUserId)
       firestore.collection(LECTURE_COLLECTION).add(updatedTask).await().id
     }
 
-  override suspend fun update(lecture: Lecture): Unit =
+  override suspend fun update(bacReading: BacReading): Unit =
     trace(UPDATE_LECTURE_TRACE) {
-      firestore.collection(LECTURE_COLLECTION).document(lecture.id).set(lecture).await()
+      firestore.collection(LECTURE_COLLECTION).document(bacReading.id).set(bacReading).await()
     }
 
   override suspend fun delete(lectureId: String) {

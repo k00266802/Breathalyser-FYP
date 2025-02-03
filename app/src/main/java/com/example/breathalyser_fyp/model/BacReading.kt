@@ -16,15 +16,13 @@ limitations under the License.
 
 package com.example.breathalyser_fyp.model
 
+import androidx.compose.runtime.mutableStateOf
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
-import java.util.Date
 
-data class Lecture(
+data class BacReading(
   @DocumentId val id: String = "",
-  val lectureName: String = "",
-  val startTime: Date = Date(),
-  val endTime: Date = Date(),
-  val description: String = "",
-  val room: String = "",
+  val bacValue: Int = 0,
+  val timestamp: Timestamp = Timestamp.now(),
   val userId: String = ""
 )

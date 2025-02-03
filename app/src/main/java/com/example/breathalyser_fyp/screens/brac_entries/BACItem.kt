@@ -14,28 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.breathalyser_fyp.screens.lectures
+package com.example.breathalyser_fyp.screens.brac_entries
 
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.breathalyser_fyp.model.Lecture
-import java.text.SimpleDateFormat
-
+import com.example.breathalyser_fyp.model.BacReading
 
 
 @Composable
 @ExperimentalMaterialApi
-fun LectureItem(
-  lecture: Lecture,
-  options: List<String>,
+fun BACItem(
+  bacReading: BacReading,
   isExpanded: Boolean,
   onExpandedChange: (Boolean) -> Unit
 )
@@ -52,14 +48,13 @@ fun LectureItem(
       modifier = Modifier.fillMaxWidth(),
     ) {
       Column(modifier = Modifier.weight(1f)) {
-        Text(text = lecture.lectureName, style = MaterialTheme.typography.subtitle1)
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-          Text(text = SimpleDateFormat("dd/MM/yyyy").format(lecture.startTime).toString(), fontSize = 14.sp)
-          Text(text = SimpleDateFormat("HH:mm").format(lecture.startTime).toString() + " - " + SimpleDateFormat("HH:mm").format(lecture.endTime).toString(), fontSize = 12.sp)
-        }
+        Text(text = bacReading.bacValue.toString(), style = MaterialTheme.typography.h2)
+//        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+//          Text(text = SimpleDateFormat("dd/MM/yyyy").format(bracReading.startTime).toString(), fontSize = 14.sp)
+//          Text(text = SimpleDateFormat("HH:mm").format(bracReading.startTime).toString() + " - " + SimpleDateFormat("HH:mm").format(bracReading.endTime).toString(), fontSize = 12.sp)
+//        }
         if(isExpanded){
-          Text(text = lecture.description, style = MaterialTheme.typography.body1, fontSize = 14.sp)
-          Text(text = lecture.room, style = MaterialTheme.typography.body1, fontSize = 10.sp)
+          Text(text = bacReading.timestamp.toDate().toString(), style = MaterialTheme.typography.body1, fontSize = 14.sp)
         }
       }
     }

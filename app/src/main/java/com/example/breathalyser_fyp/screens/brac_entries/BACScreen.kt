@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.breathalyser_fyp.screens.lectures
+package com.example.breathalyser_fyp.screens.brac_entries
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -31,36 +31,37 @@ import com.example.breathalyser_fyp.R.string as AppText
 import com.example.breathalyser_fyp.common.composable.ActionToolbar
 import com.example.breathalyser_fyp.common.ext.smallSpacer
 import com.example.breathalyser_fyp.common.ext.toolbarActions
-import com.example.breathalyser_fyp.model.Lecture
+import com.example.breathalyser_fyp.model.BacReading
 import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
 
 @Composable
 @ExperimentalMaterialApi
-fun LecturesScreen(
+fun BacScreen(
   openScreen: (String) -> Unit,
-  viewModel: LecturesViewModel = hiltViewModel()
+  viewModel: BACViewModel = hiltViewModel()
 ) {
-  val lectures = viewModel.lectures.collectAsStateWithLifecycle(emptyList())
-  val options by viewModel.options
+  val bacReadings by viewModel.bacEntries.collectAsStateWithLifecycle(emptyList())
+  val liveBacReadings by viewModel.liveBacReadings.collectAsStateWithLifecycle ()
+  val allReadings = remember(bacReadings, liveBacReadings) {
+    liveBacReadings + bacReadings
+  }
 
-  LecturesScreenContent(
-    lectures = lectures.value,
-    options = options,
+  BacScreenContent(
+    bacReading = allReadings,
     onMapClick = viewModel::onMapClick,
     onSettingsClick = viewModel::onSettingsClick,
     openScreen = openScreen
   )
 
-  LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
+  LaunchedEffect(viewModel) {  }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterialApi
-fun LecturesScreenContent(
+fun BacScreenContent(
   modifier: Modifier = Modifier,
-  lectures: List<Lecture>,
-  options: List<String>,
+  bacReading: List<BacReading>,
   onMapClick: ((String) -> Unit) -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
   openScreen: (String) -> Unit
@@ -80,16 +81,15 @@ fun LecturesScreenContent(
       )
 
       Spacer(modifier = Modifier.smallSpacer())
-      val expandStates = remember(lectures) { lectures.map { false }.toMutableStateList() }
+      val expandStates = remember(bacReading) { bacReading.map { false }.toMutableStateList() }
       Log.w("expandStates", expandStates.toString())
 
       LazyColumn {
-        lectures.forEachIndexed { i, lecture ->
+        bacReading.forEachIndexed { i, bacReading ->
           val expanded = expandStates[i]
           item(key = i){
-            LectureItem(
-              lecture = lecture,
-              options = options,
+            BACItem(
+              bacReading = bacReading,
               isExpanded = expanded,
               onExpandedChange = { expandStates[i] = it }
             )
@@ -103,18 +103,17 @@ fun LecturesScreenContent(
 @Preview(showBackground = true)
 @ExperimentalMaterialApi
 @Composable
-fun LecturesScreenPreview() {
-  val lecture = Lecture(
-    lectureName = "Lecture title",
-    description = "Lecture Description"
+fun BacScreenPreview() {
+  val bacReading = BacReading(
+    bacValue = 209
   )
 
-  val options = TaskActionOption.Companion.getOptions(hasEditOption = true)
+  //val options = TaskActionOption.Companion.getOptions(hasEditOption = true)
 
   TimetableAppTheme {
-    LecturesScreenContent(
-      lectures = listOf(lecture),
-      options = options,
+    BacScreenContent(
+      bacReading = listOf(bacReading, bacReading, bacReading),
+      //options = options,
       onMapClick = { },
       onSettingsClick = { },
       openScreen = { }
