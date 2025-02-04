@@ -14,13 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.breathalyser_fyp
+package com.example.breathalyser_fyp.screens.sign_up
 
-const val SPLASH_SCREEN = "SplashScreen"
-const val SETTINGS_SCREEN = "SettingsScreen"
-const val LOGIN_SCREEN = "LoginScreen"
-const val LECTURES_SCREEN = "LecturesScreen"
-const val SIGN_UP_SCREEN = "SignUpScreen"
-
-const val TASK_ID = "taskId"
-const val TASK_ID_ARG = "?$TASK_ID={$TASK_ID}"
+data class SignUpUiState(
+  val email: String = "",
+  val password: String = "",
+  val repeatPassword: String = ""
+)

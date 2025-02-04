@@ -33,7 +33,7 @@ import com.example.breathalyser_fyp.common.ext.smallSpacer
 import com.example.breathalyser_fyp.common.ext.toolbarActions
 import com.example.breathalyser_fyp.model.BacReading
 import com.example.breathalyser_fyp.resources
-import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
+import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as TimetableAppTheme
 import androidx.compose.runtime.getValue
 
 @Composable

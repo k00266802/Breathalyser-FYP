@@ -30,7 +30,7 @@ import com.example.breathalyser_fyp.R.drawable as AppIcon
 import com.example.breathalyser_fyp.R.string as AppText
 import com.example.breathalyser_fyp.common.ext.card
 import com.example.breathalyser_fyp.common.ext.spacer
-import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
+import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as BreathalyseAppTheme
 import com.example.breathalyser_fyp.common.composable.BasicToolbar
 import com.example.breathalyser_fyp.common.composable.DangerousCardEditor
 import com.example.breathalyser_fyp.common.composable.DialogCancelButton
@@ -147,7 +147,7 @@ private fun DeleteMyAccountCard(deleteMyAccount: () -> Unit) {
 fun SettingsScreenPreview() {
   val uiState = SettingsUiState(isAnonymousAccount = false)
 
-  TimetableAppTheme {
+  BreathalyseAppTheme {
     SettingsScreenContent(
       uiState = uiState,
       onLoginClick = { },

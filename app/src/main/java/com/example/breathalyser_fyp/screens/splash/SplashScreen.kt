@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.breathalyser_fyp.R.string as AppText
 import com.example.breathalyser_fyp.common.composable.BasicButton
 import com.example.breathalyser_fyp.common.ext.basicButton
-import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
+import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as TimetableAppTheme
 import kotlinx.coroutines.delay
 
 private const val SPLASH_TIMEOUT = 1000L

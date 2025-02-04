@@ -14,56 +14,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.breathalyser_fyp.screens.login
+package com.example.breathalyser_fyp.screens.sign_up
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.breathalyser_fyp.R.string as AppText
-import com.example.breathalyser_fyp.common.ext.basicButton
-import com.example.breathalyser_fyp.common.ext.fieldModifier
-import com.example.breathalyser_fyp.common.ext.textButton
-import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as TimetableAppTheme
 import com.example.breathalyser_fyp.common.composable.BasicButton
-import com.example.breathalyser_fyp.common.composable.BasicTextButton
 import com.example.breathalyser_fyp.common.composable.BasicToolbar
 import com.example.breathalyser_fyp.common.composable.EmailField
 import com.example.breathalyser_fyp.common.composable.PasswordField
+import com.example.breathalyser_fyp.common.composable.RepeatPasswordField
+import com.example.breathalyser_fyp.common.ext.basicButton
+import com.example.breathalyser_fyp.common.ext.fieldModifier
+import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme
+import com.example.breathalyser_fyp.R.string as AppText
+
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
   openAndPopUp: (String, String) -> Unit,
-  viewModel: LoginViewModel = hiltViewModel()
+  viewModel: SignUpViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState
 
-  LoginScreenContent(
+  SignUpScreenContent(
     uiState = uiState,
     onEmailChange = viewModel::onEmailChange,
     onPasswordChange = viewModel::onPasswordChange,
-    onSignInClick = { viewModel.onSignInClick(openAndPopUp) },
-    onSignUpClick = viewModel::onSignUpClick,
-    onForgotPasswordClick = viewModel::onForgotPasswordClick
+    onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
+    onSignUpClick = { viewModel.onSignUpClick(openAndPopUp) }
   )
 }
 
 @Composable
-fun LoginScreenContent(
+fun SignUpScreenContent(
   modifier: Modifier = Modifier,
-  uiState: LoginUiState,
+  uiState: SignUpUiState,
   onEmailChange: (String) -> Unit,
   onPasswordChange: (String) -> Unit,
-  onSignInClick: () -> Unit,
-  onSignUpClick: ((String) -> Unit) -> Unit,
-  onForgotPasswordClick: () -> Unit
+  onRepeatPasswordChange: (String) -> Unit,
+  onSignUpClick: () -> Unit
 ) {
-  BasicToolbar(AppText.login_details)
+  val fieldModifier = Modifier.fieldModifier()
+
+  BasicToolbar(AppText.create_account)
 
   Column(
     modifier = modifier
@@ -73,33 +72,30 @@ fun LoginScreenContent(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    EmailField(uiState.email, onEmailChange, Modifier.fieldModifier())
-    PasswordField(uiState.password, onPasswordChange, Modifier.fieldModifier())
+    EmailField(uiState.email, onEmailChange, fieldModifier)
+    PasswordField(uiState.password, onPasswordChange, fieldModifier)
+    RepeatPasswordField(uiState.repeatPassword, onRepeatPasswordChange, fieldModifier)
 
-    BasicButton(AppText.sign_in, Modifier.basicButton()) { onSignInClick() }
-    BasicButton(AppText.sign_up, Modifier.basicButton()) { onSignInClick() }
-
-    BasicTextButton(AppText.forgot_password, Modifier.textButton()) {
-      onForgotPasswordClick()
+    BasicButton(AppText.create_account, Modifier.basicButton()) {
+      onSignUpClick()
     }
   }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-  val uiState = LoginUiState(
+fun SignUpScreenPreview() {
+  val uiState = SignUpUiState(
     email = "email@test.com"
   )
 
-  TimetableAppTheme {
-    LoginScreenContent(
+  BreathalyserAppTheme {
+    SignUpScreenContent(
       uiState = uiState,
       onEmailChange = { },
       onPasswordChange = { },
-      onSignInClick = { },
-      onSignUpClick = { },
-      onForgotPasswordClick = { }
+      onRepeatPasswordChange = { },
+      onSignUpClick = { }
     )
   }
 }
