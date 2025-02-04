@@ -45,9 +45,6 @@ class BACViewModel @Inject constructor(
     private val storageService: StorageService,
     private val configurationService: ConfigurationService
 ) : BreathalyserFYPViewModel(logService) {
-    val options = mutableStateOf<List<String>>(listOf())
-
-
     val bacEntries = storageService.bacReadings
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var bluetoothSocket: BluetoothSocket? = null
@@ -56,18 +53,24 @@ class BACViewModel @Inject constructor(
     val liveBacReadings: StateFlow<List<BacReading>> = _liveBacReadings
 
     // UI States
-    private val _isConnected = MutableLiveData<Boolean>(false)
-    val isConnected: LiveData<Boolean> = _isConnected
+    private val _isConnected = MutableStateFlow<Boolean>(false)
+    val isConnected: StateFlow<Boolean> = _isConnected
 
     private val _receivedData = MutableLiveData<String>()
     val receivedData: LiveData<String> = _receivedData
 
 
-    fun onMapClick(openScreen: (String) -> Unit) = openScreen(CAMPUS_MAP_SCREEN)
-
 
 
     fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
+
+    fun toggleBluetoothConnection(deviceName: String) {
+        if (_isConnected.value == true) {
+            disconnectDevice()
+        } else {
+            connectToDevice(deviceName)
+        }
+    }
 
     @SuppressLint("MissingPermission")
     fun connectToDevice(deviceName: String) {
@@ -83,10 +86,10 @@ class BACViewModel @Inject constructor(
         try {
             socket?.connect()
             bluetoothSocket = socket
-            _isConnected.postValue(true)
+            _isConnected.value = true
             startListeningForData(socket)
         } catch (e: Exception) {
-            _isConnected.postValue(false)
+            _isConnected.value = false
             _receivedData.postValue("Error connecting to device: ${e.message}")
         }
     }
@@ -96,7 +99,7 @@ class BACViewModel @Inject constructor(
         try {
             bluetoothSocket?.close()
             bluetoothSocket = null
-            _isConnected.postValue(false)
+            _isConnected.value = false
         } catch (e: IOException) {
             _receivedData.postValue("Error disconnecting from device: ${e.message}")
         }

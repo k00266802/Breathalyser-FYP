@@ -32,7 +32,9 @@ import com.example.breathalyser_fyp.common.composable.ActionToolbar
 import com.example.breathalyser_fyp.common.ext.smallSpacer
 import com.example.breathalyser_fyp.common.ext.toolbarActions
 import com.example.breathalyser_fyp.model.BacReading
+import com.example.breathalyser_fyp.resources
 import com.example.breathalyser_fyp.ui.theme.AppTheme as TimetableAppTheme
+import androidx.compose.runtime.getValue
 
 @Composable
 @ExperimentalMaterialApi
@@ -45,10 +47,14 @@ fun BacScreen(
   val allReadings = remember(bacReadings, liveBacReadings) {
     liveBacReadings + bacReadings
   }
+  val isConnected by viewModel.isConnected.collectAsStateWithLifecycle()
+
+  val deviceName = resources().getString(AppText.device_name)
 
   BacScreenContent(
     bacReading = allReadings,
-    onMapClick = viewModel::onMapClick,
+    isConnected = isConnected,
+    onToggleBluetooth = {viewModel.toggleBluetoothConnection(deviceName)},
     onSettingsClick = viewModel::onSettingsClick,
     openScreen = openScreen
   )
@@ -62,7 +68,8 @@ fun BacScreen(
 fun BacScreenContent(
   modifier: Modifier = Modifier,
   bacReading: List<BacReading>,
-  onMapClick: ((String) -> Unit) -> Unit,
+  isConnected: Boolean,
+  onToggleBluetooth: () -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
   openScreen: (String) -> Unit
 ) {
@@ -76,8 +83,8 @@ fun BacScreenContent(
         modifier = Modifier.toolbarActions(),
         primaryActionIcon = AppIcon.ic_settings,
         primaryAction = { onSettingsClick(openScreen) },
-        secondaryAction = { onMapClick(openScreen) },
-        secondaryActionIcon = AppIcon.ic_map_24px
+        secondaryAction = { onToggleBluetooth },
+        secondaryActionIcon = if (isConnected) AppIcon.ic_bluetooth_connected else AppIcon.ic_bluetooth
       )
 
       Spacer(modifier = Modifier.smallSpacer())
@@ -113,8 +120,8 @@ fun BacScreenPreview() {
   TimetableAppTheme {
     BacScreenContent(
       bacReading = listOf(bacReading, bacReading, bacReading),
-      //options = options,
-      onMapClick = { },
+      isConnected = true,
+      onToggleBluetooth = { },
       onSettingsClick = { },
       openScreen = { }
     )
