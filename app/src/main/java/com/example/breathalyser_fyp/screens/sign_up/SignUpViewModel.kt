@@ -18,6 +18,7 @@ package com.example.breathalyser_fyp.screens.sign_up
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import com.example.breathalyser_fyp.BAC_ENTRIES_SCREEN
 import com.example.breathalyser_fyp.SETTINGS_SCREEN
 import com.example.breathalyser_fyp.SIGN_UP_SCREEN
 import com.example.breathalyser_fyp.common.ext.isValidEmail
@@ -78,7 +79,7 @@ class SignUpViewModel @Inject constructor(
     Log.w("Sign up", "Linking account")
     launchCatching {
       accountService.linkAccount(email, password)
-      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+      openAndPopUp(BAC_ENTRIES_SCREEN, SIGN_UP_SCREEN)
     }
   }
 }
