@@ -43,10 +43,7 @@ fun BacScreen(
   viewModel: BACViewModel = hiltViewModel()
 ) {
   val bacReadings by viewModel.bacEntries.collectAsStateWithLifecycle(emptyList())
-  //val liveBacReadings by viewModel.liveBacReadings.collectAsStateWithLifecycle ()
-  //val allReadings = remember(bacReadings, liveBacReadings) {
-  //    liveBacReadings + bacReadings
-  //  }
+
   val isConnected by viewModel.isConnected.collectAsStateWithLifecycle()
 
   val deviceName = resources().getString(AppText.device_name)

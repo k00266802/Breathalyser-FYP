@@ -19,6 +19,7 @@ package com.example.breathalyser_fyp.screens.bac_entries
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -119,10 +120,17 @@ class BACViewModel @Inject constructor(
             try {
                 val bytes = inputStream?.read(buffer) ?: break
                 val receivedMessage = String(buffer, 0, bytes)
-                val newBacValue = receivedMessage.toIntOrNull() ?: 0
+                val newBacValue = receivedMessage
+
+                Log.w("preprocessedBac", "bluetooth data: $newBacValue")
+                if("BAC_" !in newBacValue){
+                    break
+                }
+
+                var processedBacValue = newBacValue.split("BAC_")[1].toInt()
 
                 val newBacReading = BacReading(
-                    bacValue = newBacValue,
+                    bacValue = processedBacValue,
                     timestamp = Timestamp.now(),
                 )
 
@@ -134,6 +142,7 @@ class BACViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
+                Log.e("Bluetooth Error", e.stackTraceToString())
                 _receivedData.postValue("Error reading from device: ${e.message}")
                 break
             }
