@@ -17,7 +17,7 @@ limitations under the License.
 package com.example.breathalyser_fyp.screens.login
 
 import androidx.compose.runtime.mutableStateOf
-import com.example.breathalyser_fyp.LECTURES_SCREEN
+import com.example.breathalyser_fyp.BAC_ENTRIES_SCREEN
 import com.example.breathalyser_fyp.LOGIN_SCREEN
 import com.example.breathalyser_fyp.SIGN_UP_SCREEN
 import com.example.breathalyser_fyp.R.string as AppText
@@ -66,7 +66,7 @@ class LoginViewModel @Inject constructor(
 
     launchCatching {
       accountService.authenticate(email, password)
-      openAndPopUp(LECTURES_SCREEN, LOGIN_SCREEN)
+      openAndPopUp(BAC_ENTRIES_SCREEN, LOGIN_SCREEN)
     }
   }
 

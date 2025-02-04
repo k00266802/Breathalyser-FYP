@@ -43,16 +43,16 @@ fun BacScreen(
   viewModel: BACViewModel = hiltViewModel()
 ) {
   val bacReadings by viewModel.bacEntries.collectAsStateWithLifecycle(emptyList())
-  val liveBacReadings by viewModel.liveBacReadings.collectAsStateWithLifecycle ()
-  val allReadings = remember(bacReadings, liveBacReadings) {
-    liveBacReadings + bacReadings
-  }
+  //val liveBacReadings by viewModel.liveBacReadings.collectAsStateWithLifecycle ()
+  //val allReadings = remember(bacReadings, liveBacReadings) {
+  //    liveBacReadings + bacReadings
+  //  }
   val isConnected by viewModel.isConnected.collectAsStateWithLifecycle()
 
   val deviceName = resources().getString(AppText.device_name)
 
   BacScreenContent(
-    bacReading = allReadings,
+    bacReading = bacReadings,
     isConnected = isConnected,
     onToggleBluetooth = {viewModel.toggleBluetoothConnection(deviceName)},
     onSettingsClick = viewModel::onSettingsClick,
@@ -79,11 +79,11 @@ fun BacScreenContent(
       .fillMaxWidth()
       .fillMaxHeight()) {
       ActionToolbar(
-        title = AppText.lectures,
+        title = AppText.bac_readings,
         modifier = Modifier.toolbarActions(),
         primaryActionIcon = AppIcon.ic_settings,
         primaryAction = { onSettingsClick(openScreen) },
-        secondaryAction = { onToggleBluetooth },
+        secondaryAction = { onToggleBluetooth() },
         secondaryActionIcon = if (isConnected) AppIcon.ic_bluetooth_connected else AppIcon.ic_bluetooth
       )
 

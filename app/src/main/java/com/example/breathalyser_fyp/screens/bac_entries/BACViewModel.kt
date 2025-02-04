@@ -22,7 +22,7 @@ import android.bluetooth.BluetoothSocket
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.breathalyser_fyp.CAMPUS_MAP_SCREEN
+import androidx.lifecycle.viewModelScope
 import com.example.breathalyser_fyp.SETTINGS_SCREEN
 
 import com.example.breathalyser_fyp.model.BacReading
@@ -32,8 +32,10 @@ import com.example.breathalyser_fyp.model.service.StorageService
 import com.example.breathalyser_fyp.screens.BreathalyserFYPViewModel
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.io.InputStream
 import java.util.UUID
@@ -46,6 +48,7 @@ class BACViewModel @Inject constructor(
     private val configurationService: ConfigurationService
 ) : BreathalyserFYPViewModel(logService) {
     val bacEntries = storageService.bacReadings
+
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var bluetoothSocket: BluetoothSocket? = null
 
@@ -60,15 +63,15 @@ class BACViewModel @Inject constructor(
     val receivedData: LiveData<String> = _receivedData
 
 
-
-
     fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
     fun toggleBluetoothConnection(deviceName: String) {
-        if (_isConnected.value == true) {
-            disconnectDevice()
-        } else {
-            connectToDevice(deviceName)
+        viewModelScope.launch(Dispatchers.IO) {  // ✅ Runs in background
+            if (_isConnected.value == true) {
+                disconnectDevice()
+            } else {
+                connectToDevice(deviceName)
+            }
         }
     }
 
@@ -82,26 +85,29 @@ class BACViewModel @Inject constructor(
 
         val uuid = device.uuids.firstOrNull()?.uuid ?: UUID.randomUUID()
         val socket: BluetoothSocket? = device.createRfcommSocketToServiceRecord(uuid)
-
-        try {
-            socket?.connect()
-            bluetoothSocket = socket
-            _isConnected.value = true
-            startListeningForData(socket)
-        } catch (e: Exception) {
-            _isConnected.value = false
-            _receivedData.postValue("Error connecting to device: ${e.message}")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                socket?.connect()
+                bluetoothSocket = socket
+                _isConnected.value = true
+                startListeningForData(socket)
+            } catch (e: Exception) {
+                _isConnected.value = false
+                _receivedData.postValue("Error connecting to device: ${e.message}")
+            }
         }
     }
 
     // Disconnect from Bluetooth device
     fun disconnectDevice() {
-        try {
-            bluetoothSocket?.close()
-            bluetoothSocket = null
-            _isConnected.value = false
-        } catch (e: IOException) {
-            _receivedData.postValue("Error disconnecting from device: ${e.message}")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                bluetoothSocket?.close()
+                bluetoothSocket = null
+                _isConnected.value = false
+            } catch (e: IOException) {
+                _receivedData.postValue("Error disconnecting from device: ${e.message}")
+            }
         }
     }
 
@@ -123,7 +129,7 @@ class BACViewModel @Inject constructor(
                 _liveBacReadings.value = _liveBacReadings.value + newBacReading
 
 
-                launchCatching{
+                launchCatching {
                     storageService.save(newBacReading)
                 }
 

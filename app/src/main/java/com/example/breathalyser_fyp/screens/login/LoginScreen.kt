@@ -39,6 +39,7 @@ import com.example.breathalyser_fyp.common.composable.PasswordField
 @Composable
 fun LoginScreen(
   openAndPopUp: (String, String) -> Unit,
+  openScreen: (String) -> Unit,
   viewModel: LoginViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState
@@ -49,7 +50,8 @@ fun LoginScreen(
     onPasswordChange = viewModel::onPasswordChange,
     onSignInClick = { viewModel.onSignInClick(openAndPopUp) },
     onSignUpClick = viewModel::onSignUpClick,
-    onForgotPasswordClick = viewModel::onForgotPasswordClick
+    onForgotPasswordClick = viewModel::onForgotPasswordClick,
+    openScreen = openScreen
   )
 }
 
@@ -61,7 +63,8 @@ fun LoginScreenContent(
   onPasswordChange: (String) -> Unit,
   onSignInClick: () -> Unit,
   onSignUpClick: ((String) -> Unit) -> Unit,
-  onForgotPasswordClick: () -> Unit
+  onForgotPasswordClick: () -> Unit,
+  openScreen: (String) -> Unit
 ) {
   BasicToolbar(AppText.login_details)
 
@@ -77,7 +80,7 @@ fun LoginScreenContent(
     PasswordField(uiState.password, onPasswordChange, Modifier.fieldModifier())
 
     BasicButton(AppText.sign_in, Modifier.basicButton()) { onSignInClick() }
-    BasicButton(AppText.sign_up, Modifier.basicButton()) { onSignInClick() }
+    BasicButton(AppText.sign_up, Modifier.basicButton()) { onSignUpClick(openScreen) }
 
     BasicTextButton(AppText.forgot_password, Modifier.textButton()) {
       onForgotPasswordClick()
@@ -99,7 +102,8 @@ fun LoginScreenPreview() {
       onPasswordChange = { },
       onSignInClick = { },
       onSignUpClick = { },
-      onForgotPasswordClick = { }
+      onForgotPasswordClick = { },
+      openScreen = { }
     )
   }
 }

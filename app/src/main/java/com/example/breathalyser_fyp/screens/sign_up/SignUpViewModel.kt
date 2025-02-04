@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.example.breathalyser_fyp.screens.sign_up
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.example.breathalyser_fyp.SETTINGS_SCREEN
 import com.example.breathalyser_fyp.SIGN_UP_SCREEN
@@ -58,19 +59,23 @@ class SignUpViewModel @Inject constructor(
   fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
     if (!email.isValidEmail()) {
       SnackbarManager.showMessage(AppText.email_error)
+      Log.e("Sign up","Email error")
       return
     }
 
     if (!password.isValidPassword()) {
       SnackbarManager.showMessage(AppText.password_error)
+      Log.e("Sign up","Password error")
       return
     }
 
     if (!password.passwordMatches(uiState.value.repeatPassword)) {
       SnackbarManager.showMessage(AppText.password_match_error)
+      Log.e("Sign up","Password match error")
       return
     }
 
+    Log.w("Sign up", "Linking account")
     launchCatching {
       accountService.linkAccount(email, password)
       openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)

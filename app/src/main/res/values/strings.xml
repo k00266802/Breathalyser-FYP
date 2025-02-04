@@ -25,7 +25,7 @@
     <string name="password_match_error">Passwords do not match.</string>
 
     <!-- TasksScreen -->
-    <string name="lectures">Lectures</string>
+    <string name="bac_readings">Blood Alcohol History</string>
 
     <!-- EditTaskScreen -->
     <string name="edit_task">Edit your bacReading</string>

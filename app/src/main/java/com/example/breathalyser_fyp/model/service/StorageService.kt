@@ -16,7 +16,6 @@ limitations under the License.
 
 package com.example.breathalyser_fyp.model.service
 
-import com.example.breathalyser_fyp.model.Campus
 import com.example.breathalyser_fyp.model.BacReading
 import kotlinx.coroutines.flow.Flow
 

@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.example.breathalyser_fyp.screens
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.breathalyser_fyp.common.snackbar.SnackbarManager
@@ -29,6 +30,7 @@ open class BreathalyserFYPViewModel(private val logService: LogService) : ViewMo
   fun launchCatching(snackbar: Boolean = true, block: suspend CoroutineScope.() -> Unit) =
     viewModelScope.launch(
       CoroutineExceptionHandler { _, throwable ->
+        Log.e("Snack", throwable.stackTraceToString())
         if (snackbar) {
           SnackbarManager.showMessage(throwable.toSnackbarMessage())
         }

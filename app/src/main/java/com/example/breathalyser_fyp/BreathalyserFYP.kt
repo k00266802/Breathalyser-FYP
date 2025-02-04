@@ -44,7 +44,8 @@ import com.example.breathalyser_fyp.screens.login.LoginScreen
 import com.example.breathalyser_fyp.screens.settings.SettingsScreen
 import com.example.breathalyser_fyp.screens.splash.SplashScreen
 import com.example.breathalyser_fyp.screens.bac_entries.BacScreen
-import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as TimetableAppTheme
+import com.example.breathalyser_fyp.screens.sign_up.SignUpScreen
+import com.example.breathalyser_fyp.ui.theme.BreathalyserAppTheme as BreathalyserAppTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -54,88 +55,101 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 @ExperimentalMaterialApi
 fun BreathalyserFYP() {
-  TimetableAppTheme {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      RequestNotificationPermissionDialog()
-    }
-
-    Surface(color = MaterialTheme.colors.background) {
-      val appState = rememberAppState()
-
-      Scaffold(
-        snackbarHost = {
-          SnackbarHost(
-            hostState = it,
-            modifier = Modifier.padding(8.dp),
-            snackbar = { snackbarData ->
-              Snackbar(snackbarData, contentColor = MaterialTheme.colors.onPrimary)
-            }
-          )
-        },
-        scaffoldState = appState.scaffoldState
-      ) { innerPaddingModifier ->
-        NavHost(
-          navController = appState.navController,
-          startDestination = SPLASH_SCREEN,
-          modifier = Modifier.padding(innerPaddingModifier)
-        ) {
-          timetableGraph(appState)
+    BreathalyserAppTheme {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RequestNotificationPermissionDialog()
         }
-      }
+
+        Surface(color = MaterialTheme.colors.background) {
+            val appState = rememberAppState()
+
+            Scaffold(
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = it,
+                        modifier = Modifier.padding(8.dp),
+                        snackbar = { snackbarData ->
+                            Snackbar(snackbarData, contentColor = MaterialTheme.colors.onPrimary)
+                        }
+                    )
+                },
+                scaffoldState = appState.scaffoldState
+            ) { innerPaddingModifier ->
+                NavHost(
+                    navController = appState.navController,
+                    startDestination = SPLASH_SCREEN,
+                    modifier = Modifier.padding(innerPaddingModifier)
+                ) {
+                    breathalyserAppGraph(appState)
+                }
+            }
+        }
     }
-  }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestNotificationPermissionDialog() {
-  val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    val permissionState =
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
-  if (!permissionState.status.isGranted) {
-    if (permissionState.status.shouldShowRationale) RationaleDialog()
-    else PermissionDialog { permissionState.launchPermissionRequest() }
-  }
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog()
+        else PermissionDialog { permissionState.launchPermissionRequest() }
+    }
 }
 
 @Composable
 fun rememberAppState(
-  scaffoldState: ScaffoldState = rememberScaffoldState(),
-  navController: NavHostController = rememberNavController(),
-  snackbarManager: SnackbarManager = SnackbarManager,
-  resources: Resources = resources(),
-  coroutineScope: CoroutineScope = rememberCoroutineScope()
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    navController: NavHostController = rememberNavController(),
+    snackbarManager: SnackbarManager = SnackbarManager,
+    resources: Resources = resources(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) =
-  remember(scaffoldState, navController, snackbarManager, resources, coroutineScope) {
-    BreathalyserFYPState(scaffoldState, navController, snackbarManager, resources, coroutineScope)
-  }
+    remember(scaffoldState, navController, snackbarManager, resources, coroutineScope) {
+        BreathalyserFYPState(
+            scaffoldState,
+            navController,
+            snackbarManager,
+            resources,
+            coroutineScope
+        )
+    }
 
 @Composable
 @ReadOnlyComposable
 fun resources(): Resources {
-  LocalConfiguration.current
-  return LocalContext.current.resources
+    LocalConfiguration.current
+    return LocalContext.current.resources
 }
 
 @ExperimentalMaterialApi
-fun NavGraphBuilder.timetableGraph(appState: BreathalyserFYPState) {
-  composable(SPLASH_SCREEN) {
-    SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-  }
+fun NavGraphBuilder.breathalyserAppGraph(appState: BreathalyserFYPState) {
+    composable(SPLASH_SCREEN) {
+        SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    }
 
-  composable(SETTINGS_SCREEN) {
-    SettingsScreen(
-      restartApp = { route -> appState.clearAndNavigate(route) },
-      openScreen = { route -> appState.navigate(route) }
-    )
-  }
-
-
-  composable(LOGIN_SCREEN) {
-    LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-  }
+    composable(SETTINGS_SCREEN) {
+        SettingsScreen(
+            restartApp = { route -> appState.clearAndNavigate(route) },
+            openScreen = { route -> appState.navigate(route) }
+        )
+    }
 
 
-  composable(LECTURES_SCREEN) { BacScreen(openScreen = { route -> appState.navigate(route) }) }
+    composable(LOGIN_SCREEN) {
+        LoginScreen(
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) },
+            openScreen = { route -> appState.navigate(route) })
+    }
+
+    composable(SIGN_UP_SCREEN) {
+        SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    }
+
+
+    composable(BAC_ENTRIES_SCREEN) { BacScreen(openScreen = { route -> appState.navigate(route) }) }
 
 }
