@@ -67,7 +67,7 @@ class BACViewModel @Inject constructor(
     fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
 
     fun toggleBluetoothConnection(deviceName: String) {
-        viewModelScope.launch(Dispatchers.IO) {  // ✅ Runs in background
+        viewModelScope.launch(Dispatchers.IO) {  // Runs in background
             if (_isConnected.value == true) {
                 disconnectDevice()
             } else {
@@ -127,7 +127,7 @@ class BACViewModel @Inject constructor(
                     break
                 }
 
-                var processedBacValue = newBacValue.split("BAC_")[1].toInt()
+                var processedBacValue = newBacValue.split("BAC_")[1].toDouble().toInt()
 
                 val newBacReading = BacReading(
                     bacValue = processedBacValue,
